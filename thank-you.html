@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You — ATMR</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  html { -webkit-font-smoothing:antialiased; }
+
+  :root {
+    --bg:      #0b0f16;
+    --accent:  #00b4ff;
+    --green:   #00d98b;
+    --t1:      #ffffff;
+    --t2:      #c9d4e3;
+    --t3:      #8898aa;
+    --t4:      #50627a;
+    --b0:      rgba(255,255,255,0.04);
+    --b1:      rgba(255,255,255,0.07);
+    --font:    'Arimo', system-ui, sans-serif;
+    --ease-expo: cubic-bezier(0.16,1,0.3,1);
+  }
+
+  body {
+    font-family:var(--font);
+    background:var(--bg); color:var(--t1);
+    min-height:100svh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:40px 24px;
+    text-align:center;
+    overflow:hidden;
+  }
+
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--b0) 1px, transparent 1px),
+      linear-gradient(90deg, var(--b0) 1px, transparent 1px);
+    background-size:72px 72px;
+    pointer-events:none; z-index:0;
+  }
+  body::after {
+    content:'';
+    position:fixed; inset:0;
+    background:radial-gradient(ellipse 70% 50% at 50% 0%, rgba(0,180,255,0.07) 0%, transparent 60%);
+    pointer-events:none; z-index:0;
+  }
+
+  .card {
+    position:relative; z-index:1;
+    max-width:480px; width:100%;
+    background:rgba(17,24,39,0.9);
+    border:1px solid var(--b1);
+    border-radius:20px;
+    padding:clamp(36px,6vw,56px) clamp(28px,5vw,48px);
+    animation:cardIn .8s var(--ease-expo) .1s both;
+  }
+  @keyframes cardIn {
+    from { opacity:0; transform:translateY(32px) scale(0.97); }
+    to   { opacity:1; transform:translateY(0)    scale(1); }
+  }
+
+  /* Top accent line */
+  .card::before {
+    content:'';
+    position:absolute; top:0; left:20%; right:20%; height:1px;
+    background:linear-gradient(90deg, transparent, rgba(0,217,139,.5), transparent);
+    border-radius:1px;
+  }
+
+  .icon-wrap {
+    width:72px; height:72px;
+    background:rgba(0,217,139,.1);
+    border:1px solid rgba(0,217,139,.22);
+    border-radius:50%;
+    display:grid; place-items:center;
+    margin:0 auto 28px;
+    animation:pulse 2.5s ease-in-out 1s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow:0 0 0 0 rgba(0,217,139,.25); }
+    50%      { box-shadow:0 0 0 12px rgba(0,217,139,0); }
+  }
+  .icon-wrap svg {
+    width:34px; height:34px; stroke:var(--green); fill:none;
+    stroke-width:2; stroke-linecap:round; stroke-linejoin:round;
+  }
+
+  h1 {
+    font-size:clamp(22px,4vw,30px);
+    font-weight:700; letter-spacing:-.02em;
+    margin-bottom:14px; line-height:1.15;
+  }
+  .sub {
+    font-size:14.5px; color:var(--t3);
+    line-height:1.75; margin-bottom:36px;
+  }
+  .sub strong { color:var(--t2); font-weight:600; }
+
+  .steps {
+    display:flex; flex-direction:column; gap:12px;
+    text-align:left; margin-bottom:36px;
+  }
+  .step {
+    display:flex; align-items:flex-start; gap:13px;
+    background:rgba(255,255,255,.03);
+    border:1px solid var(--b1); border-radius:10px;
+    padding:13px 15px;
+  }
+  .step-num {
+    width:24px; height:24px; flex-shrink:0;
+    background:var(--accent); color:#0b0f16;
+    border-radius:50%; font-size:12px; font-weight:700;
+    display:grid; place-items:center; margin-top:1px;
+  }
+  .step-text { font-size:13px; color:var(--t2); line-height:1.55; }
+  .step-text strong { color:var(--t1); font-weight:700; display:block; margin-bottom:2px; }
+
+  .btn-home {
+    display:inline-flex; align-items:center; gap:8px;
+    background:var(--accent); color:#0b0f16;
+    font-family:var(--font); font-size:14px; font-weight:700;
+    padding:13px 28px; border-radius:8px;
+    text-decoration:none; letter-spacing:.01em;
+    transition:background .2s, box-shadow .2s, transform .2s var(--ease-expo);
+  }
+  .btn-home:hover {
+    background:#33c3ff;
+    box-shadow:0 0 28px rgba(0,180,255,.25);
+    transform:translateY(-2px);
+  }
+  .btn-home svg { width:16px; height:16px; stroke:#0b0f16; fill:none; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+
+  .footer-note {
+    margin-top:28px;
+    font-size:12px; color:var(--t4); line-height:1.6;
+  }
+  .footer-note a { color:var(--accent); text-decoration:none; }
+  .footer-note a:hover { text-decoration:underline; }
+
+  /* ATMR wordmark */
+  .wordmark {
+    display:flex; align-items:center; justify-content:center; gap:9px;
+    margin-bottom:32px;
+    animation:cardIn .7s var(--ease-expo) 0s both;
+  }
+  .wordmark-icon {
+    width:30px; height:30px; background:var(--accent);
+    border-radius:7px; display:grid; place-items:center;
+  }
+  .wordmark-icon svg { width:15px; height:15px; fill:none; stroke:#0b0f16; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .wordmark-text { font-size:15px; font-weight:700; letter-spacing:.05em; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="wordmark">
+      <div class="wordmark-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="wordmark-text">ATMR</span>
+    </div>
+
+    <div class="icon-wrap">
+      <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+
+    <h1>You're on the list.</h1>
+    <p class="sub">
+      Thank you for registering with ATMR.<br>
+      <strong>A member of our team will be in touch within one business day.</strong>
+    </p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Check your inbox</strong>
+          You'll receive a confirmation email shortly — check your spam folder if it doesn't arrive within a few minutes.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>We review your profile</strong>
+          Our team will review your submission and match it to current opportunities or talent needs.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>We reach out</strong>
+          A dedicated ATMR consultant will contact you to discuss next steps — no obligation, no pressure.
+        </div>
+      </div>
+    </div>
+
+    <a href="/" class="btn-home">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Back to ATMR
+    </a>
+
+    <p class="footer-note">
+      Questions? Email us at <a href="mailto:hello@atm-r.com">hello@atm-r.com</a><br>
+      © 2025 ATMR — Aviation Talent Specialists
+    </p>
+  </div>
+</body>
+</html>
