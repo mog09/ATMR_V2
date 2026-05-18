@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATMR — Aviation Talent Specialists</title>
+<meta name="description" content="Connecting the aviation industry with exceptional professionals through specialised sourcing, rigorous screening, and strategic recruitment solutions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────
+   RESET
+───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; text-size-adjust: 100%; }
+
+/* ─────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────── */
+:root {
+  --bg:             #0b0f16;
+  --bg-card:        #111827;
+  --bg-card-hi:     #141e2e;
+  --bg-input:       #111827;
+  --bg-nav:         rgba(11,15,22,0.82);
+  --accent:         #00b4ff;
+  --accent-hi:      #33c3ff;
+  --accent-dim:     rgba(0,180,255,0.10);
+  --accent-glow:    rgba(0,180,255,0.20);
+  --green:          #00d98b;
+  --red:            #ff5f5f;
+  --t1:             #ffffff;
+  --t2:             #c9d4e3;
+  --t3:             #8898aa;
+  --t4:             #50627a;
+  --b0:             rgba(255,255,255,0.04);
+  --b1:             rgba(255,255,255,0.07);
+  --b2:             rgba(255,255,255,0.11);
+  --r-sm:           8px;
+  --r-md:           12px;
+  --r-lg:           16px;
+  --nav-h:          68px;
+  --max-w:          1160px;
+  --px:             clamp(24px,5vw,80px);
+  --py:             clamp(80px,10vw,130px);
+  --font:           'Arimo', system-ui, sans-serif;
+  --ease-expo:      cubic-bezier(0.16,1,0.3,1);
+  --ease-io:        cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ─────────────────────────────────────────
+   BASE
+───────────────────────────────────────── */
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--t1);
+  overflow-x: hidden;
+  line-height: 1;
+}
+
+/* Grid texture */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(var(--b0) 1px, transparent 1px),
+    linear-gradient(90deg, var(--b0) 1px, transparent 1px);
+  background-size: 72px 72px;
+  pointer-events:none; z-index:0;
+}
+/* Top accent radial */
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background: radial-gradient(ellipse 75% 45% at 50% -5%, rgba(0,180,255,0.06) 0%, transparent 60%);
+  pointer-events:none; z-index:0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar{ width:4px }
+::-webkit-scrollbar-track{ background:var(--bg) }
+::-webkit-scrollbar-thumb{ background:rgba(0,180,255,0.22); border-radius:2px }
+::-webkit-scrollbar-thumb:hover{ background:rgba(0,180,255,0.4) }
+
+/* ─────────────────────────────────────────
+   NAV
+───────────────────────────────────────── */
+nav {
+  position:fixed; top:0; left:0; right:0;
+  height:var(--nav-h);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 var(--px);
+  background:var(--bg-nav);
+  backdrop-filter:blur(22px) saturate(160%);
+  -webkit-backdrop-filter:blur(22px) saturate(160%);
+  border-bottom:1px solid var(--b1);
+  z-index:200;
+  transition:background .4s var(--ease-io), border-color .4s var(--ease-io);
+}
+nav.scrolled { background:rgba(11,15,22,0.97); border-color:var(--b2); }
+
+.nav-logo {
+  display:flex; align-items:center; gap:11px;
+  text-decoration:none; color:var(--t1); flex-shrink:0;
+}
+.nav-logo-icon {
+  width:36px; height:36px;
+  background:var(--accent); border-radius:9px;
+  display:grid; place-items:center; flex-shrink:0;
+  transition:transform .35s var(--ease-expo), box-shadow .3s;
+}
+.nav-logo:hover .nav-logo-icon {
+  transform:rotate(-5deg) scale(1.07);
+  box-shadow:0 0 22px var(--accent-glow);
+}
+.nav-logo-icon svg { width:19px; height:19px; fill:none; stroke:#0b0f16; stroke-width:2.1; stroke-linecap:round; stroke-linejoin:round; }
+.nav-brand { font-size:17px; font-weight:700; letter-spacing:.05em; }
+
+.nav-links { display:flex; align-items:center; gap:2px; list-style:none; }
+.nav-links a {
+  display:block; padding:7px 13px;
+  font-size:13.5px; font-weight:500; color:var(--t3);
+  text-decoration:none; border-radius:var(--r-sm);
+  letter-spacing:.01em;
+  transition:color .2s, background .2s;
+  position:relative;
+}
+.nav-links a:hover { color:var(--t1); background:rgba(255,255,255,0.05); }
+.nav-links a.is-active { color:var(--t1); }
+.nav-links a.is-active::after {
+  content:'';
+  position:absolute; bottom:-1px; left:50%;
+  transform:translateX(-50%);
+  width:3px; height:3px; border-radius:50%;
+  background:var(--accent); opacity:.9;
+}
+
+.btn-nav {
+  margin-left:8px;
+  padding:9px 18px !important;
+  background:var(--accent) !important;
+  color:#0b0f16 !important;
+  font-weight:700 !important; font-size:13.5px !important;
+  border-radius:var(--r-sm) !important;
+  transition:background .22s, box-shadow .22s, transform .18s var(--ease-expo) !important;
+}
+.btn-nav:hover {
+  background:var(--accent-hi) !important; color:#0b0f16 !important;
+  box-shadow:0 0 26px var(--accent-glow) !important;
+  transform:translateY(-1px) !important;
+}
+
+.nav-toggle {
+  display:none; flex-direction:column; gap:5px;
+  cursor:pointer; background:none; border:none; padding:4px;
+}
+.nav-toggle span {
+  display:block; width:22px; height:1.5px;
+  background:var(--t2); border-radius:2px;
+  transition:transform .3s var(--ease-expo), opacity .2s;
+}
+
+/* ─────────────────────────────────────────
+   LAYOUT
+───────────────────────────────────────── */
+section { position:relative; z-index:1; padding:var(--py) var(--px); }
+.inner { max-width:var(--max-w); margin:0 auto; width:100%; }
+
+/* Section divider line */
+.section-divider::before {
+  content:'';
+  position:absolute; top:0;
+  left:var(--px); right:var(--px);
+  height:1px;
+  background:linear-gradient(90deg, transparent, var(--b2), transparent);
+}
+
+/* ─────────────────────────────────────────
+   EYEBROW
+───────────────────────────────────────── */
+.eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:10.5px; font-weight:700;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:22px;
+}
+.eyebrow::before {
+  content:''; display:block;
+  width:22px; height:1.5px;
+  background:var(--accent); border-radius:1px; flex-shrink:0;
+}
+.eyebrow-center { display:flex; justify-content:center; }
+.eyebrow-center::after {
+  content:''; display:block;
+  width:22px; height:1.5px;
+  background:var(--accent); border-radius:1px; flex-shrink:0;
+}
+
+/* ─────────────────────────────────────────
+   TYPOGRAPHY SCALE
+───────────────────────────────────────── */
+.section-h2 {
+  font-size:clamp(28px,3.6vw,44px);
+  font-weight:700; line-height:1.1;
+  letter-spacing:-.025em; margin-bottom:14px;
+}
+.section-lead {
+  font-size:15px; color:var(--t3);
+  line-height:1.75; max-width:500px;
+}
+
+/* ─────────────────────────────────────────
+   REVEAL SYSTEM
+───────────────────────────────────────── */
+.reveal {
+  opacity:0; transform:translateY(28px);
+  transition:opacity .72s var(--ease-expo), transform .72s var(--ease-expo);
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* Stagger grid — children animate in sequence */
+.stagger > * {
+  opacity:0; transform:translateY(22px);
+}
+.stagger.visible > *:nth-child(1){ animation:slideUp .65s var(--ease-expo) 0.04s forwards; }
+.stagger.visible > *:nth-child(2){ animation:slideUp .65s var(--ease-expo) 0.13s forwards; }
+.stagger.visible > *:nth-child(3){ animation:slideUp .65s var(--ease-expo) 0.22s forwards; }
+.stagger.visible > *:nth-child(4){ animation:slideUp .65s var(--ease-expo) 0.31s forwards; }
+.stagger.visible > *:nth-child(5){ animation:slideUp .65s var(--ease-expo) 0.38s forwards; }
+
+@keyframes slideUp {
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* ─────────────────────────────────────────
+   HERO
+───────────────────────────────────────── */
+#hero {
+  min-height:100svh;
+  padding-top:calc(var(--nav-h) + clamp(60px,9vw,120px));
+  padding-bottom:clamp(60px,8vw,100px);
+  display:flex; align-items:center;
+}
+
+/* Hero elements enter on load */
+.h-e { opacity:0; }
+.h-e-1 { animation:heroIn .85s var(--ease-expo) .08s forwards; }
+.h-e-2 { animation:heroIn .9s  var(--ease-expo) .2s  forwards; }
+.h-e-3 { animation:heroIn .9s  var(--ease-expo) .34s forwards; }
+.h-e-4 { animation:heroIn .9s  var(--ease-expo) .46s forwards; }
+.h-e-5 { animation:heroIn .9s  var(--ease-expo) .6s  forwards; }
+
+@keyframes heroIn {
+  from { opacity:0; transform:translateY(26px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  font-size:10.5px; font-weight:700;
+  letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:28px;
+}
+.hero-eyebrow::before {
+  content:''; display:block;
+  width:22px; height:1.5px;
+  background:var(--accent); border-radius:1px;
+}
+
+.hero-h1 {
+  font-size:clamp(46px,7.5vw,90px);
+  font-weight:700; line-height:1.025;
+  letter-spacing:-.03em; max-width:820px;
+  margin-bottom:26px;
+}
+.hero-h1 .accent { color:var(--accent); position:relative; display:inline; }
+
+.hero-sub {
+  font-size:clamp(14px,1.35vw,16.5px);
+  color:var(--t3); line-height:1.8;
+  max-width:490px; margin-bottom:46px;
+}
+
+.hero-btns { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:76px; }
+
+/* Buttons */
+.btn-primary {
+  display:inline-flex; align-items:center; gap:7px;
+  background:var(--accent); color:#0b0f16;
+  font-family:var(--font); font-size:14px; font-weight:700;
+  padding:13px 26px; border-radius:var(--r-sm);
+  border:none; cursor:pointer; text-decoration:none;
+  letter-spacing:.01em;
+  position:relative; overflow:hidden;
+  transition:background .22s, box-shadow .22s, transform .2s var(--ease-expo);
+}
+.btn-primary::after {
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.11) 0%,transparent 100%);
+  pointer-events:none;
+}
+.btn-primary:hover {
+  background:var(--accent-hi);
+  box-shadow:0 0 30px var(--accent-glow), 0 4px 18px rgba(0,0,0,.3);
+  transform:translateY(-2px);
+}
+.btn-primary:active { transform:translateY(0); box-shadow:none; }
+
+.btn-secondary {
+  display:inline-flex; align-items:center; gap:7px;
+  background:transparent; color:var(--t2);
+  font-family:var(--font); font-size:14px; font-weight:600;
+  padding:12px 26px; border-radius:var(--r-sm);
+  border:1px solid var(--b2); cursor:pointer;
+  text-decoration:none; letter-spacing:.01em;
+  transition:color .2s, border-color .22s, background .22s, transform .2s var(--ease-expo);
+}
+.btn-secondary:hover {
+  color:var(--t1); border-color:rgba(255,255,255,.26);
+  background:rgba(255,255,255,.05); transform:translateY(-2px);
+}
+.btn-secondary:active { transform:translateY(0); }
+
+/* Hero stats bar */
+.hero-stats {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--b1); padding-top:48px;
+}
+.stat-item { padding-right:clamp(16px,3vw,40px); }
+.stat-item+.stat-item {
+  padding-left:clamp(16px,3vw,40px);
+  border-left:1px solid var(--b1);
+}
+.stat-num {
+  font-size:clamp(32px,4vw,46px); font-weight:700;
+  color:var(--accent); letter-spacing:-.025em;
+  line-height:1; margin-bottom:10px;
+  font-variant-numeric:tabular-nums;
+}
+.stat-label {
+  font-size:10.5px; font-weight:700;
+  letter-spacing:.11em; text-transform:uppercase;
+  color:var(--t4);
+}
+
+/* ─────────────────────────────────────────
+   SERVICES
+───────────────────────────────────────── */
+#services.section-divider { padding-top:var(--py); }
+.section-header { margin-bottom:52px; }
+
+.services-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:16px;
+}
+.service-card {
+  background:var(--bg-card); border:1px solid var(--b1);
+  border-radius:var(--r-lg); padding:34px 28px 30px;
+  position:relative; overflow:hidden; cursor:default;
+  transition:border-color .35s var(--ease-io), transform .35s var(--ease-expo), background .35s var(--ease-io);
+}
+/* Radial top glow on hover */
+.service-card::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 65% 35% at 50% 0%, rgba(0,180,255,0.07), transparent 65%);
+  opacity:0; transition:opacity .4s; pointer-events:none;
+}
+/* Accent top line */
+.service-card::after {
+  content:''; position:absolute; top:0; left:20%; right:20%; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,180,255,.35),transparent);
+  opacity:0; transition:opacity .35s; pointer-events:none;
+}
+.service-card:hover { border-color:rgba(0,180,255,.25); background:var(--bg-card-hi); transform:translateY(-5px); }
+.service-card:hover::before, .service-card:hover::after { opacity:1; }
+
+.service-icon {
+  width:44px; height:44px;
+  background:var(--accent-dim); border:1px solid rgba(0,180,255,.11);
+  border-radius:var(--r-sm); display:grid; place-items:center;
+  margin-bottom:24px;
+  transition:background .3s, box-shadow .3s;
+}
+.service-card:hover .service-icon {
+  background:rgba(0,180,255,.18);
+  box-shadow:0 0 16px rgba(0,180,255,.22);
+}
+.service-icon svg { width:21px; height:21px; stroke:var(--accent); fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; }
+
+.service-h3 {
+  font-size:16px; font-weight:700; color:var(--t1);
+  letter-spacing:-.01em; margin-bottom:12px; line-height:1.3;
+}
+.service-desc { font-size:13.5px; color:var(--t3); line-height:1.78; margin-bottom:22px; }
+
+.service-list {
+  list-style:none; display:flex; flex-direction:column; gap:9px;
+  padding-top:20px; border-top:1px solid var(--b1);
+}
+.service-list li {
+  font-size:12.5px; color:var(--t4);
+  display:flex; align-items:center; gap:9px;
+  transition:color .2s;
+}
+.service-card:hover .service-list li { color:var(--t3); }
+.service-list li::before {
+  content:''; flex-shrink:0; width:13px; height:13px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%2300b4ff' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6L9 17l-5-5'/%3E%3C/svg%3E");
+  background-size:contain; background-repeat:no-repeat;
+}
+
+/* ─────────────────────────────────────────
+   DASHBOARD
+───────────────────────────────────────── */
+#dashboard.section-divider { }
+
+.dashboard-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:13px; margin-bottom:13px; }
+
+.kpi-card {
+  background:var(--bg-card); border:1px solid var(--b1);
+  border-radius:var(--r-md); padding:20px 20px 18px;
+  position:relative; overflow:hidden;
+  transition:border-color .3s, transform .3s var(--ease-expo);
+}
+.kpi-card::after {
+  content:''; position:absolute; top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,180,255,.3),transparent);
+  opacity:0; transition:opacity .3s;
+}
+.kpi-card:hover { border-color:rgba(0,180,255,.22); transform:translateY(-3px); }
+.kpi-card:hover::after { opacity:1; }
+
+.kpi-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+.kpi-label { font-size:10px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--t4); }
+.kpi-icon { width:17px; height:17px; stroke:var(--t4); fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+
+.kpi-value {
+  font-size:34px; font-weight:700; color:var(--t1);
+  letter-spacing:-.03em; line-height:1; margin-bottom:9px;
+  font-variant-numeric:tabular-nums;
+}
+.kpi-value sup { font-size:15px; font-weight:500; color:var(--t3); letter-spacing:0; }
+
+.kpi-delta { font-size:11.5px; font-weight:600; display:flex; align-items:center; gap:4px; color:var(--t4); }
+.kpi-delta .up   { color:var(--green); }
+.kpi-delta .dn   { color:var(--red); }
+
+.db-lower { display:grid; grid-template-columns:1fr 330px; gap:13px; }
+
+.panel {
+  background:var(--bg-card); border:1px solid var(--b1);
+  border-radius:var(--r-md); padding:24px 22px;
+}
+.panel-title {
+  font-size:14px; font-weight:700; color:var(--t1);
+  letter-spacing:-.01em; margin-bottom:20px;
+  padding-bottom:14px; border-bottom:1px solid var(--b1);
+}
+
+/* Pipeline */
+.pipe-rows { display:flex; flex-direction:column; gap:16px; }
+.pipe-item { display:grid; grid-template-columns:96px 1fr 34px; align-items:center; gap:12px; }
+.pipe-label { font-size:12.5px; color:var(--t3); font-weight:500; }
+.bar-track { height:4px; background:rgba(255,255,255,.06); border-radius:999px; overflow:hidden; }
+.bar-fill {
+  height:100%; border-radius:999px;
+  transform:scaleX(0); transform-origin:left;
+  transition:transform 1.1s var(--ease-expo);
+}
+.bar-fill.go { transform:scaleX(1); }
+.bar-c { background:linear-gradient(90deg,#0088bb,var(--accent)); }
+.bar-g { background:linear-gradient(90deg,#00a066,var(--green)); }
+.pipe-count { font-size:12.5px; font-weight:700; text-align:right; font-variant-numeric:tabular-nums; }
+
+/* Activity */
+.act-list { display:flex; flex-direction:column; }
+.act-item {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:13px 0; border-bottom:1px solid var(--b1);
+}
+.act-item:last-child { border-bottom:none; padding-bottom:0; }
+.act-item:first-child { padding-top:0; }
+.act-dot {
+  width:28px; height:28px; border-radius:50%;
+  display:grid; place-items:center; flex-shrink:0; margin-top:2px;
+}
+.act-dot svg { width:13px; height:13px; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.dot-g { background:rgba(0,217,139,.12); } .dot-g svg { stroke:var(--green); }
+.dot-b { background:var(--accent-dim); }   .dot-b svg { stroke:var(--accent); }
+.dot-a { background:rgba(251,191,36,.1); } .dot-a svg { stroke:#fbbf24; }
+.dot-o { background:rgba(251,146,60,.1); } .dot-o svg { stroke:#fb923c; }
+.act-title { font-size:12.5px; font-weight:600; color:var(--t2); margin-bottom:3px; line-height:1.4; }
+.act-time  { font-size:11px; color:var(--t4); }
+
+/* ─────────────────────────────────────────
+   ABOUT
+───────────────────────────────────────── */
+#about.section-divider { }
+
+.about-grid { display:grid; grid-template-columns:1fr 400px; gap:clamp(48px,7vw,96px); align-items:start; }
+.about-h2 {
+  font-size:clamp(30px,4vw,52px); font-weight:700;
+  line-height:1.07; letter-spacing:-.03em; margin-bottom:34px;
+}
+.about-ps { display:flex; flex-direction:column; gap:17px; }
+.about-p { font-size:13.5px; color:var(--t3); line-height:1.88; }
+
+.about-grid-stats { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+.about-stat {
+  background:var(--bg-card); border:1px solid var(--b1);
+  border-radius:var(--r-md); padding:26px 20px;
+  text-align:center; position:relative; overflow:hidden;
+  transition:border-color .3s, transform .3s var(--ease-expo);
+}
+.about-stat::after {
+  content:''; position:absolute; top:0; left:15%; right:15%; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,180,255,.3),transparent);
+  opacity:0; transition:opacity .3s;
+}
+.about-stat:hover { border-color:rgba(0,180,255,.22); transform:translateY(-4px); }
+.about-stat:hover::after { opacity:1; }
+.about-stat-n {
+  font-size:30px; font-weight:700; color:var(--accent);
+  letter-spacing:-.025em; line-height:1; margin-bottom:8px;
+}
+.about-stat-n.word { font-size:22px; color:var(--t1); letter-spacing:.03em; }
+.about-stat-l { font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--t4); }
+
+/* ─────────────────────────────────────────
+   CONTACT
+───────────────────────────────────────── */
+#contact.section-divider { text-align:center; }
+.contact-head { margin-bottom:50px; }
+.contact-h2 {
+  font-size:clamp(26px,4vw,48px); font-weight:700;
+  letter-spacing:-.025em; margin-bottom:11px;
+}
+.contact-sub { font-size:14.5px; color:var(--t3); line-height:1.6; }
+
+.contact-cards {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:12px;
+  max-width:660px; margin:0 auto 48px; text-align:left;
+}
+.cc {
+  background:var(--bg-card); border:1px solid var(--b1);
+  border-radius:var(--r-md); padding:24px 20px;
+  cursor:pointer; position:relative; overflow:hidden;
+  transition:border-color .3s, background .3s, transform .3s var(--ease-expo);
+}
+.cc::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 80% 55% at 50% 0%,rgba(0,180,255,.06),transparent 65%);
+  opacity:0; transition:opacity .35s; pointer-events:none;
+}
+.cc:hover { border-color:rgba(0,180,255,.24); background:var(--bg-card-hi); transform:translateY(-4px); }
+.cc:hover::before { opacity:1; }
+.cc-icon {
+  width:36px; height:36px;
+  background:var(--accent-dim); border:1px solid rgba(0,180,255,.1);
+  border-radius:var(--r-sm); display:grid; place-items:center; margin-bottom:14px;
+  transition:background .3s, box-shadow .3s;
+}
+.cc:hover .cc-icon { background:rgba(0,180,255,.18); box-shadow:0 0 13px rgba(0,180,255,.22); }
+.cc-icon svg { width:17px; height:17px; stroke:var(--accent); fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+.cc h3 { font-size:14px; font-weight:700; color:var(--t1); margin-bottom:7px; letter-spacing:-.01em; }
+.cc p  { font-size:12.5px; color:var(--t3); line-height:1.65; }
+
+/* Form */
+.cform { max-width:450px; margin:0 auto; text-align:left; }
+.frow  { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+.fg    { display:flex; flex-direction:column; gap:7px; margin-bottom:13px; }
+.flabel {
+  font-size:10px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--t4);
+}
+.fctl {
+  width:100%; background:var(--bg-input); border:1px solid var(--b1);
+  border-radius:var(--r-sm); color:var(--t1);
+  font-family:var(--font); font-size:13.5px; padding:12px 14px;
+  outline:none; -webkit-appearance:none;
+  transition:border-color .22s, background .22s, box-shadow .22s;
+}
+.fctl::placeholder { color:var(--t4); }
+.fctl:hover { border-color:var(--b2); }
+.fctl:focus { border-color:var(--accent); background:rgba(0,180,255,.04); box-shadow:0 0 0 3px rgba(0,180,255,.11); }
+textarea.fctl { resize:vertical; min-height:90px; line-height:1.65; }
+
+.btn-submit {
+  display:block; width:100%; padding:14px;
+  background:var(--accent); color:#0b0f16;
+  font-family:var(--font); font-size:14px; font-weight:700;
+  border:none; border-radius:var(--r-sm); cursor:pointer;
+  letter-spacing:.02em; position:relative; overflow:hidden;
+  transition:background .22s, box-shadow .22s, transform .2s var(--ease-expo);
+  margin-top:5px;
+}
+.btn-submit::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(255,255,255,.1) 0%,transparent 100%); pointer-events:none; }
+.btn-submit:hover { background:var(--accent-hi); box-shadow:0 0 28px var(--accent-glow); transform:translateY(-2px); }
+.btn-submit:active { transform:translateY(0); box-shadow:none; }
+.btn-submit:disabled { opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+.form-ok {
+  display:none; margin-top:14px;
+  background:rgba(0,217,139,.08); border:1px solid rgba(0,217,139,.22);
+  border-radius:var(--r-sm); padding:15px;
+  text-align:center; color:var(--green);
+  font-size:13.5px; font-weight:600;
+  animation:fadeUp .5s var(--ease-expo);
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer {
+  position:relative; z-index:1;
+  border-top:1px solid var(--b1);
+  padding:24px var(--px);
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+}
+.foot-left { display:flex; align-items:center; gap:12px; }
+.foot-icon { width:27px; height:27px; background:var(--accent); border-radius:7px; display:grid; place-items:center; }
+.foot-icon svg { width:14px; height:14px; fill:none; stroke:#0b0f16; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.foot-brand { font-size:13px; font-weight:700; letter-spacing:.05em; }
+.foot-sep { width:1px; height:12px; background:var(--b2); }
+.foot-copy, .foot-tag { font-size:12px; color:var(--t4); }
+
+/* ─────────────────────────────────────────
+   CURSOR GLOW (fine pointer only)
+───────────────────────────────────────── */
+#cg {
+  position:fixed; width:260px; height:260px; border-radius:50%;
+  background:radial-gradient(circle,rgba(0,180,255,.042),transparent 70%);
+  pointer-events:none; z-index:0;
+  transform:translate(-50%,-50%);
+  transition:opacity .4s;
+  will-change:left,top;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media(max-width:1080px){
+  .dashboard-kpis { grid-template-columns:repeat(2,1fr); }
+  .db-lower { grid-template-columns:1fr; }
+  .about-grid { grid-template-columns:1fr; gap:52px; }
+  .about-grid-stats { grid-template-columns:repeat(4,1fr); }
+}
+@media(max-width:820px){
+  .services-grid { grid-template-columns:1fr; }
+  .hero-stats { grid-template-columns:repeat(2,1fr); }
+  .stat-item+.stat-item:nth-child(3){ padding-left:0; border-left:none; border-top:1px solid var(--b1); padding-top:28px; margin-top:4px; }
+  .about-grid-stats { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:640px){
+  nav { padding:0 20px; }
+  .nav-links { display:none; }
+  .nav-links.open {
+    display:flex; flex-direction:column;
+    position:fixed; top:var(--nav-h); left:0; right:0;
+    background:rgba(11,15,22,.98); backdrop-filter:blur(20px);
+    padding:18px 20px; border-bottom:1px solid var(--b2);
+    gap:2px; z-index:190;
+  }
+  .nav-toggle { display:flex; }
+  .frow { grid-template-columns:1fr; }
+  .contact-cards { grid-template-columns:1fr; max-width:400px; }
+  .hero-stats { grid-template-columns:1fr 1fr; }
+  .stat-item+.stat-item:nth-child(3){ border-top:1px solid var(--b1); padding-top:28px; padding-left:0; border-left:none; }
+  .stat-item+.stat-item:nth-child(4){ padding-top:0; }
+  footer { flex-direction:column; text-align:center; gap:8px; }
+  .foot-sep { display:none; }
+}
+@media(max-width:420px){
+  .dashboard-kpis { grid-template-columns:1fr; }
+  .about-grid-stats { grid-template-columns:1fr 1fr; }
+  .pipe-item { grid-template-columns:78px 1fr 30px; }
+  .hero-h1 { font-size:40px; }
+}
+</style>
+</head>
+<body>
+
+<div id="cg" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#hero" class="nav-logo" aria-label="ATMR home">
+    <div class="nav-logo-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <span class="nav-brand">ATMR</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#contact" class="btn-nav">Explore Our Services</a></li>
+  </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="inner">
+    <p class="hero-eyebrow h-e h-e-1">Aviation Talent Specialists</p>
+    <h1 class="hero-h1 h-e h-e-2">Precision Talent for&nbsp;<span class="accent">Aviation<br>Excellence</span></h1>
+    <p class="hero-sub h-e h-e-3">Connecting the aviation industry with exceptional professionals through specialised sourcing, rigorous screening, and strategic recruitment solutions.</p>
+    <div class="hero-btns h-e h-e-4">
+      <a href="#services" class="btn-primary">Explore Our Services</a>
+      <a href="#dashboard" class="btn-secondary">View Dashboard</a>
+    </div>
+    <div class="hero-stats h-e h-e-5">
+      <div class="stat-item">
+        <div class="stat-num" data-target="2400">0</div>
+        <div class="stat-label">Placements Made</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" data-target="96">0</div>
+        <div class="stat-label">% Retention Rate</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" data-target="180">0</div>
+        <div class="stat-label">Aviation Clients</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num" data-target="14">0</div>
+        <div class="stat-label">Years of Expertise</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" class="section-divider">
+  <div class="inner">
+    <div class="section-header reveal">
+      <p class="eyebrow">What We Do</p>
+      <h2 class="section-h2">Our Core Services</h2>
+      <p class="section-lead">End-to-end aviation recruitment solutions, engineered for precision and performance.</p>
+    </div>
+    <div class="services-grid stagger">
+      <article class="service-card">
+        <div class="service-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <h3 class="service-h3">Talent Sourcing</h3>
+        <p class="service-desc">Proactive identification and engagement of top-tier aviation professionals. Our network spans ATM engineers, air traffic controllers, airspace design specialists, and leadership across ANSPs and ATM service providers globally.</p>
+        <ul class="service-list">
+          <li>Passive candidate mapping</li>
+          <li>Aviation-specific talent pools</li>
+          <li>Global reach, local insight</li>
+        </ul>
+      </article>
+      <article class="service-card">
+        <div class="service-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        </div>
+        <h3 class="service-h3">Permanent &amp; Contract Recruitment</h3>
+        <p class="service-desc">Flexible hiring solutions tailored to your operational tempo. Whether you need permanent team members or contract specialists for seasonal demand or project-based work, we deliver.</p>
+        <ul class="service-list">
+          <li>Permanent placements</li>
+          <li>Contract &amp; temp-to-perm</li>
+          <li>Rapid deployment capability</li>
+        </ul>
+      </article>
+      <article class="service-card">
+        <div class="service-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        </div>
+        <h3 class="service-h3">Candidate Screening &amp; Assessment</h3>
+        <p class="service-desc">Rigorous, aviation-grade vetting processes. From regulatory compliance checks to technical assessments and psychometric profiling, we ensure every candidate meets the highest standards.</p>
+        <ul class="service-list">
+          <li>Regulatory compliance verification</li>
+          <li>Technical skills assessment</li>
+          <li>Capability assessment &amp; evaluation</li>
+          <li>Psychometric profiling</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="section-divider">
+  <div class="inner">
+    <div class="section-header reveal">
+      <p class="eyebrow">Live Overview</p>
+      <h2 class="section-h2">ATMR Dashboard</h2>
+    </div>
+    <div class="dashboard-kpis stagger">
+      <div class="kpi-card">
+        <div class="kpi-head">
+          <span class="kpi-label">Active Roles</span>
+          <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="kpi-value">47</div>
+        <div class="kpi-delta"><span class="up">↑ +12%</span>&ensp;<span>vs last month</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-head">
+          <span class="kpi-label">Candidates in Pipeline</span>
+          <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="kpi-value">312</div>
+        <div class="kpi-delta"><span class="up">↑ +8%</span>&ensp;<span>vs last month</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-head">
+          <span class="kpi-label">Placements This Month</span>
+          <svg class="kpi-icon" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></svg>
+        </div>
+        <div class="kpi-value">23</div>
+        <div class="kpi-delta"><span class="up">↑ +18%</span>&ensp;<span>vs last month</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-head">
+          <span class="kpi-label">Avg. Time to Hire</span>
+          <svg class="kpi-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <div class="kpi-value">18<sup>d</sup></div>
+        <div class="kpi-delta"><span class="dn">↓ -3 days</span>&ensp;<span>vs last month</span></div>
+      </div>
+    </div>
+    <div class="db-lower reveal">
+      <div class="panel">
+        <div class="panel-title">Recruitment Pipeline</div>
+        <div class="pipe-rows" id="pipeRows">
+          <div class="pipe-item">
+            <span class="pipe-label">Sourced</span>
+            <div class="bar-track"><div class="bar-fill bar-c" data-w="100"></div></div>
+            <span class="pipe-count" style="color:var(--accent)">142</span>
+          </div>
+          <div class="pipe-item">
+            <span class="pipe-label">Screening</span>
+            <div class="bar-track"><div class="bar-fill bar-c" data-w="61"></div></div>
+            <span class="pipe-count" style="color:var(--accent)">87</span>
+          </div>
+          <div class="pipe-item">
+            <span class="pipe-label">Interview</span>
+            <div class="bar-track"><div class="bar-fill bar-c" data-w="37"></div></div>
+            <span class="pipe-count" style="color:var(--accent)">52</span>
+          </div>
+          <div class="pipe-item">
+            <span class="pipe-label">Offer Stage</span>
+            <div class="bar-track"><div class="bar-fill bar-c" data-w="22"></div></div>
+            <span class="pipe-count" style="color:var(--accent)">31</span>
+          </div>
+          <div class="pipe-item">
+            <span class="pipe-label">Placed</span>
+            <div class="bar-track"><div class="bar-fill bar-g" data-w="16"></div></div>
+            <span class="pipe-count" style="color:var(--green)">23</span>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Recent Activity</div>
+        <div class="act-list">
+          <div class="act-item">
+            <div class="act-dot dot-g" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></div>
+            <div><div class="act-title">ATM Engineer placed at ANSP</div><div class="act-time">2 hours ago</div></div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot dot-b" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg></div>
+            <div><div class="act-title">8 new airspace designers sourced</div><div class="act-time">5 hours ago</div></div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot dot-a" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></div>
+            <div><div class="act-title">Assessment complete — Flow Manager</div><div class="act-time">Yesterday</div></div>
+          </div>
+          <div class="act-item">
+            <div class="act-dot dot-o" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+            <div><div class="act-title">Contract renewal — Air Traffic Controller</div><div class="act-time">2 days ago</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="section-divider">
+  <div class="inner">
+    <div class="about-grid">
+      <div>
+        <p class="eyebrow reveal">About ATMR</p>
+        <h2 class="about-h2 reveal">Built for Aviation.<br>Driven by Precision.</h2>
+        <div class="about-ps">
+          <p class="about-p reveal">ATMR was founded with a singular mission: to solve the aviation industry's most critical talent challenges. Whether you're an employer seeking exceptional professionals or a talented candidate ready to elevate your career, we're here to connect the right people with the right opportunities.</p>
+          <p class="about-p reveal">Our team combines deep sector expertise with modern recruitment technology to deliver candidates who don't just fill roles — they advance airspace management and ATM operations. From Air Navigation Service Providers and ATM service companies to airspace design firms and aviation consultancies, we specialise in sourcing and placing top-tier talent across the air traffic management ecosystem.</p>
+          <p class="about-p reveal">We recruit across all ATM disciplines: air traffic controllers and operational supervisors, ATM engineers and system architects, airspace design specialists, instrument procedure designers, aeronautical information managers, flow management specialists, and safety leaders. Every candidate we place is vetted to the highest industry standards — because excellence in air traffic management is non-negotiable.</p>
+        </div>
+      </div>
+      <div class="about-grid-stats stagger">
+        <div class="about-stat"><div class="about-stat-n">35+</div><div class="about-stat-l">Countries Served</div></div>
+        <div class="about-stat"><div class="about-stat-n">50k+</div><div class="about-stat-l">Talent Database</div></div>
+        <div class="about-stat"><div class="about-stat-n word">EASA</div><div class="about-stat-l">Compliant Processes</div></div>
+        <div class="about-stat"><div class="about-stat-n">24/7</div><div class="about-stat-l">Support Available</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="section-divider">
+  <div class="inner">
+    <div class="contact-head reveal">
+      <p class="eyebrow eyebrow-center">Get Involved</p>
+      <h2 class="contact-h2">Ready to Connect with ATMR?</h2>
+      <p class="contact-sub">Choose how you'd like to engage with us</p>
+    </div>
+    <div class="contact-cards stagger">
+      <div class="cc">
+        <div class="cc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
+        <h3>Apply for Open Roles</h3>
+        <p>Browse and apply for active positions across airlines, MRO providers, and aerospace companies worldwide.</p>
+      </div>
+      <div class="cc">
+        <div class="cc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Join Our Candidate Database</h3>
+        <p>Register your aviation profile and get matched with opportunities aligned to your skills and career goals.</p>
+      </div>
+      <div class="cc">
+        <div class="cc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+        <h3>Weekly Newsletter</h3>
+        <p>Stay informed with weekly updates on industry trends, emerging roles, and aviation recruitment insights.</p>
+      </div>
+      <div class="cc">
+        <div class="cc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27,6.96 12,12.01 20.73,6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+        <h3>Employer Talent Search</h3>
+        <p>Access our curated talent database to find exceptional aviation professionals matched to your specific requirements.</p>
+      </div>
+    </div>
+    <form class="cform reveal" id="cform" novalidate>
+      <div class="frow">
+        <div class="fg"><label class="flabel" for="fn">First Name</label><input type="text" id="fn" class="fctl" placeholder="John" required autocomplete="given-name"></div>
+        <div class="fg"><label class="flabel" for="ln">Last Name</label><input type="text" id="ln" class="fctl" placeholder="Doe" required autocomplete="family-name"></div>
+      </div>
+      <div class="fg"><label class="flabel" for="em">Email</label><input type="email" id="em" class="fctl" placeholder="john@example.com" required autocomplete="email"></div>
+      <div class="fg"><label class="flabel" for="ai">Additional Information</label><textarea id="ai" class="fctl" placeholder="Tell us more about your interest…"></textarea></div>
+      <button type="submit" class="btn-submit" id="sbtn">Submit</button>
+      <div class="form-ok" id="fok" role="status">✓ Thank you — we'll be in touch shortly.</div>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-left">
+    <div class="foot-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <span class="foot-brand">ATMR</span>
+    <div class="foot-sep" aria-hidden="true"></div>
+    <span class="foot-copy">© 2025 All rights reserved</span>
+  </div>
+  <span class="foot-tag">Aviation Talent Specialists</span>
+</footer>
+
+<script>
+/* ── Cursor glow ── */
+const cg = document.getElementById('cg');
+if (window.matchMedia('(pointer:fine)').matches && cg) {
+  let mx=-500,my=-500,gx=-500,gy=-500;
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;},{passive:true});
+  (function loop(){
+    gx+=(mx-gx)*0.09; gy+=(my-gy)*0.09;
+    cg.style.left=gx+'px'; cg.style.top=gy+'px';
+    requestAnimationFrame(loop);
+  })();
+} else { cg&&(cg.style.display='none'); }
+
+/* ── Nav scroll class ── */
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>24),{passive:true});
+
+/* ── Mobile toggle ── */
+const tog=document.getElementById('navToggle');
+const nls=document.getElementById('navLinks');
+tog.addEventListener('click',()=>{
+  const o=nls.classList.toggle('open');
+  tog.setAttribute('aria-expanded',o);
+  const s=tog.querySelectorAll('span');
+  if(o){s[0].style.transform='rotate(45deg) translate(4.5px,4.5px)';s[1].style.opacity='0';s[2].style.transform='rotate(-45deg) translate(4.5px,-4.5px)';}
+  else{s.forEach(x=>{x.style.transform='';x.style.opacity='';}); }
+});
+nls.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{
+  nls.classList.remove('open');tog.setAttribute('aria-expanded',false);
+  tog.querySelectorAll('span').forEach(s=>{s.style.transform='';s.style.opacity='';});
+}));
+
+/* ── Active nav link ── */
+const secs=document.querySelectorAll('section[id]');
+const als=document.querySelectorAll('.nav-links a:not(.btn-nav)');
+new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting) als.forEach(a=>a.classList.toggle('is-active',a.getAttribute('href')==='#'+e.target.id));
+}),{rootMargin:'-35% 0px -55% 0px'}).observe&&secs.forEach(s=>
+  new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting) als.forEach(a=>a.classList.toggle('is-active',a.getAttribute('href')==='#'+e.target.id));
+  }),{rootMargin:'-35% 0px -55% 0px'}).observe(s)
+);
+
+/* ── Smooth scroll (offset for nav) ── */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(!t) return;
+    e.preventDefault();
+    window.scrollTo({top:t.getBoundingClientRect().top+scrollY-78,behavior:'smooth'});
+  });
+});
+
+/* ── Reveal observer ── */
+const ro=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}
+}),{threshold:0.1,rootMargin:'0px 0px -36px 0px'});
+document.querySelectorAll('.reveal,.stagger').forEach(el=>ro.observe(el));
+
+/* ── Pipeline bars ── */
+const bo=new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting){
+    e.target.querySelectorAll('.bar-fill').forEach((b,i)=>{
+      const w=parseFloat(b.dataset.w)/100;
+      setTimeout(()=>{b.style.transform=`scaleX(${w})`;b.classList.add('go');},i*90);
+    });
+    bo.unobserve(e.target);
+  }
+}),{threshold:0.3});
+const pr=document.querySelector('#pipeRows');
+if(pr) bo.observe(pr);
+
+/* ── Counter animation ── */
+function ease(t){return 1-Math.pow(1-t,3);}
+function countUp(el,target,dur=1600){
+  const start=performance.now();
+  const fmt=n=>n>=1000?n.toLocaleString():String(n);
+  (function run(now){
+    const p=Math.min((now-start)/dur,1);
+    el.textContent=fmt(Math.round(ease(p)*target));
+    if(p<1)requestAnimationFrame(run);
+    else el.textContent=fmt(target);
+  })(performance.now());
+}
+new IntersectionObserver(entries=>entries.forEach(e=>{
+  if(e.isIntersecting){
+    document.querySelectorAll('[data-target]').forEach((el,i)=>setTimeout(()=>countUp(el,+el.dataset.target),i*90));
+  }
+}),{threshold:0.5}).observe(document.querySelector('.hero-stats'));
+
+/* ── Form ── */
+document.getElementById('cform').addEventListener('submit',function(e){
+  e.preventDefault();
+  const b=document.getElementById('sbtn');
+  b.textContent='Sending…'; b.disabled=true;
+  setTimeout(()=>{b.style.display='none';document.getElementById('fok').style.display='block';},900);
+});
+</script>
+</body>
+</html>
