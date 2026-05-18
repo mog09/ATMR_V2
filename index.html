@@ -1574,12 +1574,82 @@ pills.forEach(pill => {
   });
 });
 
-document.getElementById('cform').addEventListener('submit',function(e){
-  e.preventDefault();
-  const b=document.getElementById('sbtn');
-  b.textContent='Sending…'; b.disabled=true;
-  setTimeout(()=>{b.style.display='none';document.getElementById('fok').style.display='block';},900);
-});
+/* ── Contact form → Telegram ── */
+(function(){
+  const BOT   = '8560060163:AAGmwx9RjDIGL-Kou0IzGj-ok-f_Fw4Sl4M';
+  const CHAT  = '8846560138';
+  const API   = `https://api.telegram.org/bot${BOT}/sendMessage`;
+
+  document.getElementById('cform').addEventListener('submit', async function(e){
+    e.preventDefault();
+
+    const btn  = document.getElementById('sbtn');
+    const ok   = document.getElementById('fok');
+
+    /* Grab values */
+    const fn   = document.getElementById('fn').value.trim();
+    const ln   = document.getElementById('ln').value.trim();
+    const em   = document.getElementById('em').value.trim();
+    const ai   = document.getElementById('ai').value.trim();
+
+    /* Basic validation */
+    if (!fn || !em) {
+      document.getElementById('fn').focus();
+      return;
+    }
+
+    /* Button loading state */
+    btn.textContent = 'Sending…';
+    btn.disabled    = true;
+
+    /* Build the Telegram message */
+    const now = new Date().toLocaleString('en-GB', {
+      day:'2-digit', month:'short', year:'numeric',
+      hour:'2-digit', minute:'2-digit'
+    });
+
+    const msg = [
+      '📬 *New ATMR Contact Enquiry*',
+      '─────────────────────',
+      `👤 *Name:* ${fn} ${ln}`,
+      `📧 *Email:* ${em}`,
+      `💬 *Message:*\n${ai || '_(no message provided)_'}`,
+      '─────────────────────',
+      `🕐 ${now}`
+    ].join('\n');
+
+    try {
+      const res = await fetch(API, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id:    CHAT,
+          text:       msg,
+          parse_mode: 'Markdown'
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.ok) {
+        /* Success */
+        btn.style.display = 'none';
+        ok.style.display  = 'block';
+        /* Reset form fields */
+        document.getElementById('cform').reset();
+      } else {
+        throw new Error(data.description || 'Telegram error');
+      }
+
+    } catch(err) {
+      console.error('Telegram send failed:', err);
+      btn.textContent = 'Try Again';
+      btn.disabled    = false;
+      ok.style.cssText = 'display:block;background:rgba(255,95,95,0.08);border-color:rgba(255,95,95,0.25);color:#ff5f5f;';
+      ok.textContent  = '⚠ Something went wrong — please email us directly.';
+    }
+  });
+})();
 </script>
 </body>
 </html>
