@@ -1170,11 +1170,8 @@ footer {
           <div class="reg-form-title">Create Your Candidate Profile</div>
           <div class="reg-form-sub">Takes less than 2 minutes. No payment required.</div>
 
-          <form id="form-cand" novalidate
-            action="https://formspree.io/f/mdajopjz"
-            method="POST">
+          <form id="form-cand" novalidate>
             <input type="hidden" name="user_type" value="Candidate">
-            <input type="hidden" name="_next" value="https://atm-r.com/thank-you.html">
 
             <div class="frow">
               <div class="fg">
@@ -1247,7 +1244,15 @@ footer {
 
             <div class="reg-divider"></div>
 
-            <button type="submit" class="btn-submit">Create My Profile →</button>
+            <button type="submit" class="btn-submit" id="cand-btn">Create My Profile →</button>
+            <div class="reg-trust" id="cand-ok" style="display:none;color:var(--green);justify-content:center;margin-top:16px;font-weight:600;">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M20 6L9 17l-5-5"/></svg>
+              Profile received — we'll be in touch shortly.
+            </div>
+            <div class="reg-trust" id="cand-err" style="display:none;color:var(--red);justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              Something went wrong — please try again.
+            </div>
             <div class="reg-trust">
               <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               No spam. No payment. Unsubscribe any time.
@@ -1316,11 +1321,8 @@ footer {
           <div class="reg-form-title">Register Your Organisation</div>
           <div class="reg-form-sub">Tell us about your hiring needs and we'll be in touch within one business day.</div>
 
-          <form id="form-emp" novalidate
-            action="https://formspree.io/f/mdajopjz"
-            method="POST">
+          <form id="form-emp" novalidate>
             <input type="hidden" name="user_type" value="Employer">
-            <input type="hidden" name="_next" value="https://atm-r.com/thank-you.html">
 
             <div class="frow">
               <div class="fg">
@@ -1397,7 +1399,15 @@ footer {
 
             <div class="reg-divider"></div>
 
-            <button type="submit" class="btn-submit">Submit Enquiry →</button>
+            <button type="submit" class="btn-submit" id="emp-btn">Submit Enquiry →</button>
+            <div class="reg-trust" id="emp-ok" style="display:none;color:var(--green);justify-content:center;margin-top:16px;font-weight:600;">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M20 6L9 17l-5-5"/></svg>
+              Enquiry received — a consultant will contact you within 1 business day.
+            </div>
+            <div class="reg-trust" id="emp-err" style="display:none;color:var(--red);justify-content:center;">
+              <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              Something went wrong — please try again.
+            </div>
             <div class="reg-trust">
               <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               No obligation. A consultant will contact you within 1 business day.
@@ -1574,82 +1584,135 @@ pills.forEach(pill => {
   });
 });
 
-/* ── Contact form → Telegram ── */
-(function(){
-  const BOT   = '8560060163:AAGmwx9RjDIGL-Kou0IzGj-ok-f_Fw4Sl4M';
-  const CHAT  = '-5125831341';
-  const API   = `https://api.telegram.org/bot${BOT}/sendMessage`;
+/* ── Telegram config (all three forms) ── */
+const TG_BOT  = '8560060163:AAGmwx9RjDIGL-Kou0IzGj-ok-f_Fw4Sl4M';
+const TG_CHAT = '-5125831341';
+const TG_URL  = `https://api.telegram.org/bot${TG_BOT}/sendMessage`;
 
-  document.getElementById('cform').addEventListener('submit', async function(e){
-    e.preventDefault();
+function tgTs() {
+  return new Date().toLocaleString('en-GB',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
 
-    const btn  = document.getElementById('sbtn');
-    const ok   = document.getElementById('fok');
-
-    /* Grab values */
-    const fn   = document.getElementById('fn').value.trim();
-    const ln   = document.getElementById('ln').value.trim();
-    const em   = document.getElementById('em').value.trim();
-    const ai   = document.getElementById('ai').value.trim();
-
-    /* Basic validation */
-    if (!fn || !em) {
-      document.getElementById('fn').focus();
-      return;
-    }
-
-    /* Button loading state */
-    btn.textContent = 'Sending…';
-    btn.disabled    = true;
-
-    /* Build the Telegram message */
-    const now = new Date().toLocaleString('en-GB', {
-      day:'2-digit', month:'short', year:'numeric',
-      hour:'2-digit', minute:'2-digit'
+async function sendTelegram(msg, btnEl, okEl, errEl) {
+  btnEl.disabled = true;
+  const origLabel = btnEl.textContent;
+  btnEl.textContent = 'Sending…';
+  try {
+    const r = await fetch(TG_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({chat_id:TG_CHAT, text:msg, parse_mode:'Markdown'})
     });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.description);
+    btnEl.style.display = 'none';
+    okEl.style.display  = 'flex';
+    if (errEl) errEl.style.display = 'none';
+    btnEl.closest('form').reset();
+  } catch(err) {
+    console.error('Telegram error:', err);
+    btnEl.disabled = false;
+    btnEl.textContent = origLabel;
+    if (errEl) errEl.style.display = 'flex';
+  }
+}
 
-    const msg = [
-      '📬 *New ATMR Contact Enquiry*',
-      '─────────────────────',
-      `👤 *Name:* ${fn} ${ln}`,
-      `📧 *Email:* ${em}`,
-      `💬 *Message:*\n${ai || '_(no message provided)_'}`,
-      '─────────────────────',
-      `🕐 ${now}`
-    ].join('\n');
+/* ── 1. Candidate registration form ── */
+document.getElementById('form-cand').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const fn   = document.getElementById('c-fn').value.trim();
+  const ln   = document.getElementById('c-ln').value.trim();
+  const em   = document.getElementById('c-em').value.trim();
+  const role = document.getElementById('c-role').value;
+  const exp  = document.getElementById('c-exp').value;
+  const interests = [...this.querySelectorAll('input[name="interests"]:checked')].map(x=>x.value).join(', ') || 'None selected';
+  if (!fn || !em || !role) { document.getElementById('c-fn').focus(); return; }
+  const msg = [
+    '✈️ *New Candidate Registration*',
+    '─────────────────────',
+    `👤 *Name:* ${fn} ${ln}`,
+    `📧 *Email:* ${em}`,
+    `🎯 *Discipline:* ${role}`,
+    `📅 *Experience:* ${exp || 'Not specified'}`,
+    `✅ *Interests:* ${interests}`,
+    '─────────────────────',
+    `🕐 ${tgTs()}`
+  ].join('\n');
+  sendTelegram(msg,
+    document.getElementById('cand-btn'),
+    document.getElementById('cand-ok'),
+    document.getElementById('cand-err')
+  );
+});
 
-    try {
-      const res = await fetch(API, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id:    CHAT,
-          text:       msg,
-          parse_mode: 'Markdown'
-        })
-      });
+/* ── 2. Employer registration form ── */
+document.getElementById('form-emp').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const fn   = document.getElementById('e-fn').value.trim();
+  const ln   = document.getElementById('e-ln').value.trim();
+  const co   = document.getElementById('e-co').value.trim();
+  const em   = document.getElementById('e-em').value.trim();
+  const type = document.getElementById('e-type').value;
+  const vol  = document.getElementById('e-vol').value;
+  const svcs = [...this.querySelectorAll('input[name="services"]:checked')].map(x=>x.value).join(', ') || 'None selected';
+  if (!fn || !co || !em || !type) { document.getElementById('e-fn').focus(); return; }
+  const msg = [
+    '🏢 *New Employer Enquiry*',
+    '─────────────────────',
+    `👤 *Contact:* ${fn} ${ln}`,
+    `🏗 *Organisation:* ${co}`,
+    `📧 *Email:* ${em}`,
+    `🏷 *Org Type:* ${type}`,
+    `📊 *Hiring Volume:* ${vol || 'Not specified'}`,
+    `🛠 *Services Required:* ${svcs}`,
+    '─────────────────────',
+    `🕐 ${tgTs()}`
+  ].join('\n');
+  sendTelegram(msg,
+    document.getElementById('emp-btn'),
+    document.getElementById('emp-ok'),
+    document.getElementById('emp-err')
+  );
+});
 
-      const data = await res.json();
-
-      if (data.ok) {
-        /* Success */
-        btn.style.display = 'none';
-        ok.style.display  = 'block';
-        /* Reset form fields */
-        document.getElementById('cform').reset();
-      } else {
-        throw new Error(data.description || 'Telegram error');
-      }
-
-    } catch(err) {
-      console.error('Telegram send failed:', err);
-      btn.textContent = 'Try Again';
-      btn.disabled    = false;
-      ok.style.cssText = 'display:block;background:rgba(255,95,95,0.08);border-color:rgba(255,95,95,0.25);color:#ff5f5f;';
-      ok.textContent  = '⚠ Something went wrong — please email us directly.';
-    }
-  });
-})();
+/* ── 3. Bottom contact form ── */
+document.getElementById('cform').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('sbtn');
+  const ok  = document.getElementById('fok');
+  const fn  = document.getElementById('fn').value.trim();
+  const ln  = document.getElementById('ln').value.trim();
+  const em  = document.getElementById('em').value.trim();
+  const ai  = document.getElementById('ai').value.trim();
+  if (!fn || !em) { document.getElementById('fn').focus(); return; }
+  const msg = [
+    '📬 *New Contact Enquiry*',
+    '─────────────────────',
+    `👤 *Name:* ${fn} ${ln}`,
+    `📧 *Email:* ${em}`,
+    `💬 *Message:*\n${ai || '_(no message provided)_'}`,
+    '─────────────────────',
+    `🕐 ${tgTs()}`
+  ].join('\n');
+  btn.textContent = 'Sending…'; btn.disabled = true;
+  try {
+    const r = await fetch(TG_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({chat_id:TG_CHAT, text:msg, parse_mode:'Markdown'})
+    });
+    const d = await r.json();
+    if (!d.ok) throw new Error(d.description);
+    btn.style.display = 'none';
+    ok.style.display  = 'block';
+    this.reset();
+  } catch(err) {
+    console.error(err);
+    btn.textContent = 'Try Again'; btn.disabled = false;
+    ok.style.cssText = 'display:block;background:rgba(255,95,95,0.08);border-color:rgba(255,95,95,0.25);color:#ff5f5f;';
+    ok.textContent   = '⚠ Something went wrong — please email us directly.';
+  }
+});
 </script>
 </body>
 </html>
