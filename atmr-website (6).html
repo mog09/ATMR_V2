@@ -1017,12 +1017,85 @@ footer {
   .reg-checks { grid-template-columns:1fr; }
   .reg-toggle { width:100%; }
   .reg-pill { flex:1; text-align:center; }
+/* ─────────────────────────────────────────
+   FLIGHT PATH ANIMATION
+───────────────────────────────────────── */
+#flight-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
 }
-</style>
-</head>
+
+/* The canvas sits behind everything */
+#flight-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+#flight-canvas.visible { opacity: 1; }
+
+/* Aircraft SVG wrapper */
+#aircraft {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  transform-origin: center center;
+  will-change: transform;
+  filter: drop-shadow(0 0 6px rgba(0,180,255,0.5));
+  transition: opacity 0.5s;
+}
+
+/* Ping dot at aircraft nose */
+#aircraft-ping {
+  position: absolute;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: ping 2s ease-out infinite;
+}
+@keyframes ping {
+  0%   { box-shadow: 0 0 0 0 rgba(0,180,255,0.6); }
+  70%  { box-shadow: 0 0 0 10px rgba(0,180,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,180,255,0); }
+}
+
+/* Hide on mobile */
+@media (max-width: 768px) {
+  #flight-layer { display: none; }
+}
+
 <body>
 
 <div id="cg" aria-hidden="true"></div>
+
+<!-- FLIGHT PATH LAYER -->
+<div id="flight-layer" aria-hidden="true">
+  <canvas id="flight-canvas"></canvas>
+  <div id="aircraft">
+    <!-- Bird's eye view aircraft SVG -->
+    <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg" width="44" height="44">
+      <!-- Main fuselage -->
+      <ellipse cx="22" cy="22" rx="3.5" ry="13" fill="#00b4ff" opacity="0.95"/>
+      <!-- Wings -->
+      <path d="M22 20 L4 28 L8 29 L22 23 L36 29 L40 28 Z" fill="#00b4ff" opacity="0.85"/>
+      <!-- Tail fins -->
+      <path d="M22 34 L14 40 L17 40 L22 37 L27 40 L30 40 Z" fill="#00b4ff" opacity="0.75"/>
+      <!-- Cockpit highlight -->
+      <ellipse cx="22" cy="12" rx="2" ry="3" fill="#ffffff" opacity="0.4"/>
+      <!-- Wing tip lights -->
+      <circle cx="4.5" cy="28.5" r="1.2" fill="#ffffff" opacity="0.8"/>
+      <circle cx="39.5" cy="28.5" r="1.2" fill="#ffffff" opacity="0.8"/>
+    </svg>
+    <div id="aircraft-ping"></div>
+  </div>
+</div>
 
 <!-- NAV -->
 <nav id="nav">
@@ -1719,7 +1792,204 @@ pills.forEach(pill => {
   });
 });
 
-/* ── Telegram config (all three forms) ── */
+/* ══════════════════════════════════════════
+   FLIGHT PATH ANIMATION
+   Bird's eye view — trails a flight path
+   as the user scrolls down the page.
+══════════════════════════════════════════ */
+(function() {
+  if (window.matchMedia('(max-width:768px)').matches) return;
+
+  const canvas   = document.getElementById('flight-canvas');
+  const aircraft = document.getElementById('aircraft');
+  const ctx      = canvas.getContext('2d');
+
+  /* ── Config ── */
+  const CFG = {
+    pathColor:      'rgba(0,180,255,0.18)',   /* trail line */
+    pathColorFresh: 'rgba(0,180,255,0.55)',   /* recent trail */
+    pathWidth:      1.5,
+    dashLen:        8,
+    dashGap:        6,
+    glowColor:      'rgba(0,180,255,0.08)',
+    glowWidth:      8,
+    waypointRadius: 3,
+    waypointColor:  'rgba(0,180,255,0.35)',
+  };
+
+  /* ── Resize canvas ── */
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  /* ── Build the flight path waypoints ──
+     A sinusoidal path across the full
+     page height, mapped to screen coords.
+     x oscillates side to side,
+     y maps to scroll progress.
+  ── */
+  const POINT_COUNT = 120;
+  let pathPoints = []; /* { nx, ny } normalised 0-1 */
+
+  function buildPath() {
+    pathPoints = [];
+    for (let i = 0; i <= POINT_COUNT; i++) {
+      const t  = i / POINT_COUNT;
+      /* Sinusoidal x — starts left, sweeps right then left */
+      const nx = 0.2 + 0.6 * (0.5 + 0.42 * Math.sin(t * Math.PI * 3.2 + 0.4));
+      pathPoints.push({ nx, ny: t });
+    }
+  }
+  buildPath();
+
+  /* ── Get world position for a given scroll progress (0–1) ── */
+  function getPos(progress) {
+    const clamped = Math.max(0, Math.min(1, progress));
+    const idx     = clamped * POINT_COUNT;
+    const lo      = Math.floor(idx);
+    const hi      = Math.min(lo + 1, POINT_COUNT);
+    const frac    = idx - lo;
+
+    const a = pathPoints[lo];
+    const b = pathPoints[hi];
+
+    return {
+      x: (a.nx + (b.nx - a.nx) * frac) * window.innerWidth,
+      y: (a.ny + (b.ny - a.ny) * frac) * window.innerHeight
+    };
+  }
+
+  /* ── Get scroll progress 0-1 ── */
+  function scrollProgress() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    return max > 0 ? window.scrollY / max : 0;
+  }
+
+  /* ── Trail: store visited points ── */
+  let trail = []; /* { x, y, age } */
+  let lastProgress = 0;
+  let animFrame;
+
+  /* ── Draw everything ── */
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const progress = scrollProgress();
+
+    /* Add new point to trail if scrolled */
+    const currentPos = getPos(progress);
+    if (trail.length === 0 || Math.hypot(
+      currentPos.x - trail[trail.length-1].x,
+      currentPos.y - trail[trail.length-1].y
+    ) > 2) {
+      trail.push({ x: currentPos.x, y: currentPos.y, progress });
+    }
+
+    /* ── Draw faint ghost path (full route ahead) ── */
+    if (pathPoints.length > 1) {
+      ctx.save();
+      ctx.setLineDash([CFG.dashLen, CFG.dashGap]);
+      ctx.lineDashOffset = 0;
+      ctx.strokeStyle = 'rgba(0,180,255,0.07)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      pathPoints.forEach((p, i) => {
+        const x = p.nx * canvas.width;
+        const y = p.ny * canvas.height;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    /* ── Draw the trail the aircraft has flown ── */
+    if (trail.length > 1) {
+      for (let i = 1; i < trail.length; i++) {
+        const a   = trail[i-1];
+        const b   = trail[i];
+        const age = progress - b.progress; /* how far ago (in progress units) */
+        const freshness = Math.max(0, 1 - age * 4); /* fades over 25% scroll */
+
+        /* Glow pass */
+        ctx.save();
+        ctx.setLineDash([]);
+        ctx.strokeStyle = `rgba(0,180,255,${0.06 * freshness})`;
+        ctx.lineWidth   = CFG.glowWidth;
+        ctx.lineCap     = 'round';
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        ctx.restore();
+
+        /* Dashed line pass */
+        ctx.save();
+        ctx.setLineDash([CFG.dashLen, CFG.dashGap]);
+        ctx.strokeStyle = `rgba(0,180,255,${(0.15 + 0.4 * freshness)})`;
+        ctx.lineWidth   = CFG.pathWidth + freshness * 0.8;
+        ctx.lineCap     = 'round';
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      /* ── Waypoint dots along trail ── */
+      trail.forEach((pt, i) => {
+        if (i % 12 !== 0) return;
+        const age       = progress - pt.progress;
+        const freshness = Math.max(0, 1 - age * 4);
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, CFG.waypointRadius * (0.5 + 0.5 * freshness), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,180,255,${0.2 + 0.3 * freshness})`;
+        ctx.fill();
+      });
+    }
+
+    /* ── Position & rotate aircraft ── */
+    const pos = getPos(progress);
+
+    /* Calculate heading from previous to current point */
+    const lookAhead  = getPos(Math.min(progress + 0.008, 1));
+    const dx         = lookAhead.x - pos.x;
+    const dy         = lookAhead.y - pos.y;
+    const angle      = Math.atan2(dy, dx) * (180 / Math.PI) + 90; /* +90 because SVG nose points up */
+
+    aircraft.style.left      = (pos.x - 22) + 'px';
+    aircraft.style.top       = (pos.y - 22) + 'px';
+    aircraft.style.transform = `rotate(${angle}deg)`;
+
+    /* Banking: tilt based on x-direction change */
+    const prev       = getPos(Math.max(progress - 0.008, 0));
+    const bankAmount = (lookAhead.x - prev.x) * 0.4;
+    /* Apply subtle scale to simulate bank — narrow the wings slightly */
+    const scaleY     = 1 - Math.abs(bankAmount) * 0.004;
+    aircraft.style.transform = `rotate(${angle}deg) scaleY(${Math.max(0.85, scaleY)})`;
+
+    lastProgress = progress;
+    animFrame = requestAnimationFrame(draw);
+  }
+
+  /* ── Init ── */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      canvas.classList.add('visible');
+      draw();
+    }, 800);
+  });
+
+  /* ── Pause when tab hidden ── */
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(animFrame);
+    else draw();
+  });
+
+})();
+
 const TG_BOT  = '8560060163:AAGmwx9RjDIGL-Kou0IzGj-ok-f_Fw4Sl4M';
 const TG_CHAT = '-5125831341';
 const TG_URL  = `https://api.telegram.org/bot${TG_BOT}/sendMessage`;
