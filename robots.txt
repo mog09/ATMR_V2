@@ -1,0 +1,10 @@
+# ATMR — Aviation Talent Management & Recruitment
+# https://atm-r.com
+
+User-agent: *
+Allow: /
+Allow: /aviation-recruitment
+Allow: /thank-you.html
+
+# Sitemap location
+Sitemap: https://atm-r.com/sitemap.xml
