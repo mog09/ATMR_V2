@@ -1787,28 +1787,49 @@ document.getElementById('form-emp').addEventListener('submit', function(e) {
   );
 });
 
-/* ── 3. Bottom contact form ── */
+/* ── 3. Bottom contact form — standalone ── */
 document.getElementById('cform').addEventListener('submit', function(e) {
   e.preventDefault();
-  const fn = document.getElementById('fn').value.trim();
-  const ln = document.getElementById('ln').value.trim();
-  const em = document.getElementById('em').value.trim();
-  const ai = document.getElementById('ai').value.trim();
-  if (!fn || !em) { document.getElementById('fn').focus(); return; }
-  const msg = [
-    '📬 NEW GENERAL ENQUIRY',
-    '─────────────────────',
-    'Name: ' + fn + ' ' + ln,
-    'Email: ' + em,
-    'Message: ' + (ai || 'No message provided'),
-    '─────────────────────',
-    tgTs()
-  ].join('\n');
-  sendTelegram(msg,
-    document.getElementById('sbtn'),
-    document.getElementById('fok'),
-    null
-  );
+  e.stopPropagation();
+
+  var fn = document.getElementById('fn').value.trim();
+  var ln = document.getElementById('ln').value.trim();
+  var em = document.getElementById('em').value.trim();
+  var ai = document.getElementById('ai').value.trim();
+
+  if (!fn || !em) return;
+
+  var sbtn = document.getElementById('sbtn');
+  var fok  = document.getElementById('fok');
+
+  sbtn.textContent = 'Sending…';
+  sbtn.disabled = true;
+
+  var text = 'NEW GENERAL ENQUIRY\n'
+    + 'Name: ' + fn + ' ' + ln + '\n'
+    + 'Email: ' + em + '\n'
+    + 'Message: ' + (ai || 'No message') + '\n'
+    + new Date().toLocaleString('en-GB');
+
+  fetch('https://api.telegram.org/bot8560060163:AAGmwx9RjDIGL-Kou0IzGj-ok-f_Fw4Sl4M/sendMessage', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: '-5125831341', text: text })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    console.log('Telegram:', d);
+    sbtn.style.display = 'none';
+    fok.style.display  = 'block';
+  })
+  .catch(function(err) {
+    console.error('Error:', err);
+    sbtn.textContent = 'Try Again';
+    sbtn.disabled = false;
+    fok.style.display = 'block';
+    fok.style.color = '#ff5f5f';
+    fok.textContent = 'Something went wrong — email hello@atm-r.com';
+  });
 });
 </script>
 </body>
