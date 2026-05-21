@@ -1304,7 +1304,7 @@ footer {
           <div class="reg-form-title">Create Your Candidate Profile</div>
           <div class="reg-form-sub">Takes less than 2 minutes. No payment required.</div>
 
-          <form id="form-cand" novalidate>
+          <form id="form-cand" novalidate action="javascript:void(0)">
             <input type="hidden" name="user_type" value="Candidate">
 
             <div class="frow">
@@ -1455,7 +1455,7 @@ footer {
           <div class="reg-form-title">Register Your Organisation</div>
           <div class="reg-form-sub">Tell us about your hiring needs and we'll be in touch within one business day.</div>
 
-          <form id="form-emp" novalidate>
+          <form id="form-emp" novalidate action="javascript:void(0)">
             <input type="hidden" name="user_type" value="Employer">
 
             <div class="frow">
@@ -1685,11 +1685,14 @@ function countUp(el,target,dur=1600){
     else el.textContent=fmt(target);
   })(performance.now());
 }
-new IntersectionObserver(entries=>entries.forEach(e=>{
-  if(e.isIntersecting){
-    document.querySelectorAll('[data-target]').forEach((el,i)=>setTimeout(()=>countUp(el,+el.dataset.target),i*90));
-  }
-}),{threshold:0.5}).observe(document.querySelector('.hero-stats'));
+const heroStatsEl = document.querySelector('.hero-stats');
+if (heroStatsEl) {
+  new IntersectionObserver(entries=>entries.forEach(e=>{
+    if(e.isIntersecting){
+      document.querySelectorAll('[data-target]').forEach((el,i)=>setTimeout(()=>countUp(el,+el.dataset.target),i*90));
+    }
+  }),{threshold:0.5}).observe(heroStatsEl);
+}
 
 /* ── Register toggle ── */
 const pills  = document.querySelectorAll('.reg-pill');
