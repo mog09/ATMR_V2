@@ -1563,14 +1563,14 @@ footer {
       <h2 class="contact-h2">Ready to Connect with ATMR?</h2>
       <p class="contact-sub">Fill in the form below and our team will be in touch within one business day.</p>
     </div>
-    <form class="cform reveal" id="cform" novalidate onsubmit="return false;">
+    <form class="cform reveal" id="cform" novalidate>
       <div class="frow">
         <div class="fg"><label class="flabel" for="fn">First Name</label><input type="text" id="fn" class="fctl" placeholder="John" required autocomplete="given-name"></div>
         <div class="fg"><label class="flabel" for="ln">Last Name</label><input type="text" id="ln" class="fctl" placeholder="Doe" required autocomplete="family-name"></div>
       </div>
       <div class="fg"><label class="flabel" for="em">Email</label><input type="email" id="em" class="fctl" placeholder="john@example.com" required autocomplete="email"></div>
       <div class="fg"><label class="flabel" for="ai">Additional Information</label><textarea id="ai" class="fctl" placeholder="Tell us more about your interest…"></textarea></div>
-      <button type="button" class="btn-submit" id="sbtn">Submit</button>
+      <button type="submit" class="btn-submit" id="sbtn">Submit</button>
       <div id="fok" style="display:none;margin-top:14px;background:rgba(0,217,139,0.08);border:1px solid rgba(0,217,139,0.22);border-radius:8px;padding:16px;text-align:center;color:#00d98b;font-size:14px;font-weight:600;">✓ Thank you — we'll be in touch within one business day.</div>
     </form>
   </div>
@@ -1716,16 +1716,16 @@ async function sendTelegram(msg, btnEl, okEl, errEl) {
       body: JSON.stringify({chat_id:TG_CHAT, text:msg})
     });
     const d = await r.json();
+    console.log('Telegram response:', d);
     if (!d.ok) throw new Error(d.description);
     btnEl.style.display = 'none';
-    okEl.style.display  = 'flex';
+    okEl.style.display  = 'block';
     if (errEl) errEl.style.display = 'none';
-    btnEl.closest('form').reset();
   } catch(err) {
     console.error('Telegram error:', err);
     btnEl.disabled = false;
     btnEl.textContent = origLabel;
-    if (errEl) errEl.style.display = 'flex';
+    if (errEl) errEl.style.display = 'block';
   }
 }
 
@@ -1788,64 +1788,27 @@ document.getElementById('form-emp').addEventListener('submit', function(e) {
 });
 
 /* ── 3. Bottom contact form ── */
-document.addEventListener('DOMContentLoaded', function() {
-  var sbtn = document.getElementById('sbtn');
-  var fok  = document.getElementById('fok');
-  if (!sbtn || !fok) return;
-
-  sbtn.addEventListener('click', async function() {
-    var fn = (document.getElementById('fn').value || '').trim();
-    var ln = (document.getElementById('ln').value || '').trim();
-    var em = (document.getElementById('em').value || '').trim();
-    var ai = (document.getElementById('ai').value || '').trim();
-
-    if (!fn) { document.getElementById('fn').focus(); return; }
-    if (!em || em.indexOf('@') === -1) { document.getElementById('em').focus(); return; }
-
-    var msg = '📬 NEW CONTACT ENQUIRY\n'
-      + '─────────────────────\n'
-      + 'Name: ' + fn + ' ' + ln + '\n'
-      + 'Email: ' + em + '\n'
-      + 'Message: ' + (ai || 'No message provided') + '\n'
-      + '─────────────────────\n'
-      + new Date().toLocaleString('en-GB');
-
-    sbtn.textContent = 'Sending…';
-    sbtn.disabled = true;
-
-    try {
-      var response = await fetch(
-        'https://api.telegram.org/bot8560060163:AAGmwx9RjDIGL-Kou0IzGj-ok-f_Fw4Sl4M/sendMessage',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: '-5125831341', text: msg })
-        }
-      );
-      var data = await response.json();
-      console.log('Telegram:', data);
-
-      if (data.ok) {
-        sbtn.style.display = 'none';
-        fok.style.display  = 'block';
-        document.getElementById('fn').value = '';
-        document.getElementById('ln').value = '';
-        document.getElementById('em').value = '';
-        document.getElementById('ai').value = '';
-      } else {
-        throw new Error(data.description);
-      }
-    } catch(err) {
-      console.error('Telegram error:', err);
-      sbtn.textContent = 'Try Again';
-      sbtn.disabled    = false;
-      fok.style.display      = 'block';
-      fok.style.background   = 'rgba(255,95,95,0.08)';
-      fok.style.borderColor  = 'rgba(255,95,95,0.25)';
-      fok.style.color        = '#ff5f5f';
-      fok.textContent        = 'Something went wrong — please email hello@atm-r.com';
-    }
-  });
+document.getElementById('cform').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const fn = document.getElementById('fn').value.trim();
+  const ln = document.getElementById('ln').value.trim();
+  const em = document.getElementById('em').value.trim();
+  const ai = document.getElementById('ai').value.trim();
+  if (!fn || !em) { document.getElementById('fn').focus(); return; }
+  const msg = [
+    '📬 NEW GENERAL ENQUIRY',
+    '─────────────────────',
+    'Name: ' + fn + ' ' + ln,
+    'Email: ' + em,
+    'Message: ' + (ai || 'No message provided'),
+    '─────────────────────',
+    tgTs()
+  ].join('\n');
+  sendTelegram(msg,
+    document.getElementById('sbtn'),
+    document.getElementById('fok'),
+    null
+  );
 });
 </script>
 </body>
