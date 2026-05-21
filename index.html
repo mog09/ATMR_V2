@@ -1697,7 +1697,7 @@ pills.forEach(pill => {
 });
 
 
-const TG_BOT  = '8560060163:AAGmwx9RjDIGL-Kou0IzGj-ok-f_Fw4Sl4M';
+const TG_BOT  = '8944824590:AAFd30yDAxMjVJtmJpthcyDnQ3E9y8RuldE';
 const TG_CHAT = '8846560138';
 const TG_URL  = `https://api.telegram.org/bot${TG_BOT}/sendMessage`;
 
@@ -1811,7 +1811,7 @@ document.getElementById('cform').addEventListener('submit', function(e) {
     + 'Message: ' + (ai || 'No message') + '\n'
     + new Date().toLocaleString('en-GB');
 
-  fetch('https://api.telegram.org/bot8560060163:AAGmwx9RjDIGL-Kou0IzGj-ok-f_Fw4Sl4M/sendMessage', {
+  fetch('https://api.telegram.org/bot8944824590:AAFd30yDAxMjVJtmJpthcyDnQ3E9y8RuldE/sendMessage', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id: '8846560138', text: text })
