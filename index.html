@@ -1112,7 +1112,7 @@ footer {
   <div class="inner">
     <div class="section-header reveal">
       <p class="eyebrow">Live Overview</p>
-      <h2 class="section-h2">ATMR Dashboard</h2>
+      <h2 class="section-h2">ATMR Dashboard <span style="display:inline-flex;align-items:center;vertical-align:middle;margin-left:12px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:rgba(251,191,36,.12);color:#fbbf24;border:1px solid rgba(251,191,36,.25);border-radius:999px;padding:3px 11px;line-height:1;">EXAMPLE DATA</span></h2>
     </div>
     <div class="dashboard-kpis stagger">
       <div class="kpi-card">
@@ -1219,7 +1219,7 @@ footer {
       </div>
       <div class="about-grid-stats stagger">
         <div class="about-stat"><div class="about-stat-n">35+</div><div class="about-stat-l">Countries Served</div></div>
-        <div class="about-stat"><div class="about-stat-n">50k+</div><div class="about-stat-l">Talent Database</div></div>
+        <div class="about-stat"><div class="about-stat-n">1k+</div><div class="about-stat-l">Precision-Filtered Talent</div></div>
         <div class="about-stat"><div class="about-stat-n word">EASA</div><div class="about-stat-l">Compliant Processes</div></div>
         <div class="about-stat"><div class="about-stat-n">24/7</div><div class="about-stat-l">Support Available</div></div>
       </div>
@@ -1561,29 +1561,7 @@ footer {
     <div class="contact-head reveal">
       <p class="eyebrow eyebrow-center">Get Involved</p>
       <h2 class="contact-h2">Ready to Connect with ATMR?</h2>
-      <p class="contact-sub">Choose how you'd like to engage with us</p>
-    </div>
-    <div class="contact-cards stagger">
-      <div class="cc">
-        <div class="cc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
-        <h3>Apply for Open Roles</h3>
-        <p>Browse and apply for active positions across airlines, MRO providers, and aerospace companies worldwide.</p>
-      </div>
-      <div class="cc">
-        <div class="cc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <h3>Join Our Candidate Database</h3>
-        <p>Register your aviation profile and get matched with opportunities aligned to your skills and career goals.</p>
-      </div>
-      <div class="cc">
-        <div class="cc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-        <h3>Weekly Newsletter</h3>
-        <p>Stay informed with weekly updates on industry trends, emerging roles, and aviation recruitment insights.</p>
-      </div>
-      <div class="cc">
-        <div class="cc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27,6.96 12,12.01 20.73,6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
-        <h3>Employer Talent Search</h3>
-        <p>Access our curated talent database to find exceptional aviation professionals matched to your specific requirements.</p>
-      </div>
+      <p class="contact-sub">Fill in the form below and our team will be in touch within one business day.</p>
     </div>
     <form class="cform reveal" id="cform" novalidate>
       <div class="frow">
@@ -1735,7 +1713,7 @@ async function sendTelegram(msg, btnEl, okEl, errEl) {
     const r = await fetch(TG_URL, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({chat_id:TG_CHAT, text:msg, parse_mode:'Markdown'})
+      body: JSON.stringify({chat_id:TG_CHAT, text:msg})
     });
     const d = await r.json();
     if (!d.ok) throw new Error(d.description);
@@ -1762,15 +1740,15 @@ document.getElementById('form-cand').addEventListener('submit', function(e) {
   const interests = [...this.querySelectorAll('input[name="interests"]:checked')].map(x=>x.value).join(', ') || 'None selected';
   if (!fn || !em || !role) { document.getElementById('c-fn').focus(); return; }
   const msg = [
-    '✈️ *New Candidate Registration*',
+    '✈️ NEW CANDIDATE REGISTRATION',
     '─────────────────────',
-    `👤 *Name:* ${fn} ${ln}`,
-    `📧 *Email:* ${em}`,
-    `🎯 *Discipline:* ${role}`,
-    `📅 *Experience:* ${exp || 'Not specified'}`,
-    `✅ *Interests:* ${interests}`,
+    'Name: ' + fn + ' ' + ln,
+    'Email: ' + em,
+    'Discipline: ' + role,
+    'Experience: ' + (exp || 'Not specified'),
+    'Interests: ' + interests,
     '─────────────────────',
-    `🕐 ${tgTs()}`
+    tgTs()
   ].join('\n');
   sendTelegram(msg,
     document.getElementById('cand-btn'),
@@ -1791,16 +1769,16 @@ document.getElementById('form-emp').addEventListener('submit', function(e) {
   const svcs = [...this.querySelectorAll('input[name="services"]:checked')].map(x=>x.value).join(', ') || 'None selected';
   if (!fn || !co || !em || !type) { document.getElementById('e-fn').focus(); return; }
   const msg = [
-    '🏢 *New Employer Enquiry*',
+    '🏢 NEW EMPLOYER ENQUIRY',
     '─────────────────────',
-    `👤 *Contact:* ${fn} ${ln}`,
-    `🏗 *Organisation:* ${co}`,
-    `📧 *Email:* ${em}`,
-    `🏷 *Org Type:* ${type}`,
-    `📊 *Hiring Volume:* ${vol || 'Not specified'}`,
-    `🛠 *Services Required:* ${svcs}`,
+    'Contact: ' + fn + ' ' + ln,
+    'Organisation: ' + co,
+    'Email: ' + em,
+    'Org Type: ' + type,
+    'Hiring Volume: ' + (vol || 'Not specified'),
+    'Services: ' + svcs,
     '─────────────────────',
-    `🕐 ${tgTs()}`
+    tgTs()
   ].join('\n');
   sendTelegram(msg,
     document.getElementById('emp-btn'),
@@ -1820,31 +1798,36 @@ document.getElementById('cform').addEventListener('submit', async function(e) {
   const ai  = document.getElementById('ai').value.trim();
   if (!fn || !em) { document.getElementById('fn').focus(); return; }
   const msg = [
-    '📬 *New Contact Enquiry*',
+    '📬 NEW CONTACT ENQUIRY',
     '─────────────────────',
-    `👤 *Name:* ${fn} ${ln}`,
-    `📧 *Email:* ${em}`,
-    `💬 *Message:*\n${ai || '_(no message provided)_'}`,
+    'Name: ' + fn + ' ' + ln,
+    'Email: ' + em,
+    'Message: ' + (ai || 'No message provided'),
     '─────────────────────',
-    `🕐 ${tgTs()}`
+    tgTs()
   ].join('\n');
   btn.textContent = 'Sending…'; btn.disabled = true;
   try {
     const r = await fetch(TG_URL, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({chat_id:TG_CHAT, text:msg, parse_mode:'Markdown'})
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TG_CHAT,
+        text: msg
+      })
     });
     const d = await r.json();
-    if (!d.ok) throw new Error(d.description);
+    console.log('Telegram response:', d);
+    if (!d.ok) throw new Error('Telegram error: ' + d.description);
     btn.style.display = 'none';
     ok.style.display  = 'block';
     this.reset();
   } catch(err) {
-    console.error(err);
-    btn.textContent = 'Try Again'; btn.disabled = false;
+    console.error('Telegram failed:', err);
+    btn.textContent = 'Try Again';
+    btn.disabled = false;
     ok.style.cssText = 'display:block;background:rgba(255,95,95,0.08);border-color:rgba(255,95,95,0.25);color:#ff5f5f;';
-    ok.textContent   = '⚠ Something went wrong — please email us directly.';
+    ok.textContent = 'Something went wrong — please email us directly at hello@atm-r.com';
   }
 });
 </script>
