@@ -1788,66 +1788,65 @@ document.getElementById('form-emp').addEventListener('submit', function(e) {
 });
 
 /* ── 3. Bottom contact form ── */
-(function() {
-  const btn = document.getElementById('sbtn');
-  const ok  = document.getElementById('fok');
-  if (!btn) return;
+document.addEventListener('DOMContentLoaded', function() {
+  var sbtn = document.getElementById('sbtn');
+  var fok  = document.getElementById('fok');
+  if (!sbtn || !fok) return;
 
-  btn.addEventListener('click', async function() {
-    const fn = document.getElementById('fn').value.trim();
-    const ln = document.getElementById('ln').value.trim();
-    const em = document.getElementById('em').value.trim();
-    const ai = document.getElementById('ai').value.trim();
+  sbtn.addEventListener('click', async function() {
+    var fn = (document.getElementById('fn').value || '').trim();
+    var ln = (document.getElementById('ln').value || '').trim();
+    var em = (document.getElementById('em').value || '').trim();
+    var ai = (document.getElementById('ai').value || '').trim();
 
-    /* Validate */
     if (!fn) { document.getElementById('fn').focus(); return; }
-    if (!em || !em.includes('@')) { document.getElementById('em').focus(); return; }
+    if (!em || em.indexOf('@') === -1) { document.getElementById('em').focus(); return; }
 
-    /* Build message */
-    const msg = [
-      '📬 NEW CONTACT ENQUIRY',
-      '─────────────────────',
-      'Name: ' + fn + ' ' + ln,
-      'Email: ' + em,
-      'Message: ' + (ai || 'No message provided'),
-      '─────────────────────',
-      tgTs()
-    ].join('\n');
+    var msg = '📬 NEW CONTACT ENQUIRY\n'
+      + '─────────────────────\n'
+      + 'Name: ' + fn + ' ' + ln + '\n'
+      + 'Email: ' + em + '\n'
+      + 'Message: ' + (ai || 'No message provided') + '\n'
+      + '─────────────────────\n'
+      + new Date().toLocaleString('en-GB');
 
-    /* Send */
-    btn.textContent = 'Sending…';
-    btn.disabled = true;
+    sbtn.textContent = 'Sending…';
+    sbtn.disabled = true;
 
     try {
-      const r = await fetch(TG_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: TG_CHAT, text: msg })
-      });
-      const d = await r.json();
-      console.log('Telegram response:', JSON.stringify(d));
-      if (!d.ok) throw new Error(d.description || 'Telegram rejected');
+      var response = await fetch(
+        'https://api.telegram.org/bot8560060163:AAGmwx9RjDIGL-Kou0IzGj-ok-f_Fw4Sl4M/sendMessage',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: '-5125831341', text: msg })
+        }
+      );
+      var data = await response.json();
+      console.log('Telegram:', data);
 
-      /* Success — stay on page, show thank you */
-      btn.style.display = 'none';
-      ok.style.display  = 'block';
-      document.getElementById('fn').value = '';
-      document.getElementById('ln').value = '';
-      document.getElementById('em').value = '';
-      document.getElementById('ai').value = '';
-
+      if (data.ok) {
+        sbtn.style.display = 'none';
+        fok.style.display  = 'block';
+        document.getElementById('fn').value = '';
+        document.getElementById('ln').value = '';
+        document.getElementById('em').value = '';
+        document.getElementById('ai').value = '';
+      } else {
+        throw new Error(data.description);
+      }
     } catch(err) {
       console.error('Telegram error:', err);
-      btn.textContent = 'Try Again';
-      btn.disabled = false;
-      ok.style.display = 'block';
-      ok.style.background = 'rgba(255,95,95,0.08)';
-      ok.style.borderColor = 'rgba(255,95,95,0.25)';
-      ok.style.color = '#ff5f5f';
-      ok.textContent = 'Something went wrong — please email hello@atm-r.com directly.';
+      sbtn.textContent = 'Try Again';
+      sbtn.disabled    = false;
+      fok.style.display      = 'block';
+      fok.style.background   = 'rgba(255,95,95,0.08)';
+      fok.style.borderColor  = 'rgba(255,95,95,0.25)';
+      fok.style.color        = '#ff5f5f';
+      fok.textContent        = 'Something went wrong — please email hello@atm-r.com';
     }
   });
-})();
+});
 </script>
 </body>
 </html>
